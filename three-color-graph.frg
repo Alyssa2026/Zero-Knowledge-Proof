@@ -29,15 +29,28 @@ pred validGraph{
     all disj n1, n2: Node |{
         n1 in n2.connectedNodes implies n2 in n1.connectedNodes 
     } 
+    // Don't self loop
+    all n1,n2:Node|{
+        n1 = n2=> (n1 not in n2.connectedNodes and n2 not in n1.connectedNodes)
+    }
     // Connected: all vertices reachable from other vertices
     // all node:Node|{
     //     all disj
     // }
     // Ensure number of nodes ?
 }
+
+pred validThreeColor{
+    all n1,n2:Node|{
+        n2 in n2.connectedNodes implies{
+            n2.color != n1.color
+        }
+    }
+}
 // Run statement for testing
 run {
     validGraph
+    validThreeColor
 } for exactly 3 Node
 
 
