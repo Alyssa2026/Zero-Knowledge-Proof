@@ -1,4 +1,5 @@
 #lang forge/temporal
+option run_sterling "./vis_coloring.js"
 
 option max_tracelength 10
 option min_tracelength 10
