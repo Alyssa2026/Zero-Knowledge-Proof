@@ -61,7 +61,7 @@ pred validThreeColor {
     }
 }
 
-pred proverTurn {
+pred verifierToProver {
     // permute the nodes' colors
     all c1 : Color, node : Node | {
         some c2 : Color | {
@@ -70,8 +70,14 @@ pred proverTurn {
         }
     }
 
-    ProofState.nodeA = none
-    ProofState.nodeB = none
+    
+    // choose random edge 
+    some disj n1, n2 : Node | {
+        n1 in n2.neighbors and n2 in n1.neighbors
+        // Selected edge in verifier turn
+        n1 = ProofState.nodeA
+        n2 = ProofState.nodeB
+    }
 
     // maintain injectivity (better? - Khalil)
     all disj n1, n2 : Node | {
@@ -81,14 +87,9 @@ pred proverTurn {
     }
 }
 
-pred verifierTurn {
-    // choose random edge 
-    some disj n1, n2 : Node | {
-        n1 in n2.neighbors and n2 in n1.neighbors
-        // Selected edge in verifier turn
-        n1 = ProofState.nodeA
-        n2 = ProofState.nodeB
-    }
+pred proverToVerifier {
+    ProofState.nodeA = none
+    ProofState.nodeB = none
 
     // frame condition: all nodes have to stay the same color
     all node: Node | {
@@ -97,15 +98,15 @@ pred verifierTurn {
 }
 
 pred init {
-    ProofState.turn = Verifier
+    ProofState.turn = Prover
 }
 
 pred move {
     ProofState.turn = Prover implies ProofState.turn' = Verifier
     ProofState.turn = Verifier implies ProofState.turn' = Prover
 
-    ProofState.turn = Prover implies proverTurn 
-    ProofState.turn = Verifier implies verifierTurn
+    ProofState.turn = Prover implies proverToVerifier 
+    ProofState.turn = Verifier implies verifierToProver
 }
 
 pred validTraces {
