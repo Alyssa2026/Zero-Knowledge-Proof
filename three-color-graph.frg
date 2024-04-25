@@ -1,8 +1,8 @@
 #lang forge/temporal
 option run_sterling "./vis_coloring.js"
 
-option max_tracelength 10
-option min_tracelength 10
+option max_tracelength 32
+option min_tracelength 32
 
 ---------- Definitions ----------
 // color of the Node 
@@ -87,9 +87,8 @@ pred verifierToProver {
         // we uncover the
         n1.hat = none
         n2.hat = none
-        all node:Node|{
-            {node!=n1 and node!=n2} implies node.hat = Hat
-
+        all node : Node | {
+            (node != n1 and node != n2) implies node.hat = Hat
         }
     }
 
@@ -99,8 +98,6 @@ pred verifierToProver {
             n1.color' != n2.color'
         }
     }
-
-    
 }
 
 pred proverToVerifier {
@@ -122,6 +119,7 @@ pred init {
     ProofState.turn = Prover
 }
 
+
 pred move {
     ProofState.turn = Prover implies ProofState.turn' = Verifier
     ProofState.turn = Verifier implies ProofState.turn' = Prover
@@ -137,15 +135,78 @@ pred validTraces {
     always move
 }
 
-// Future 
+// INVALID 
+
+pred verifierToProverInvalid {
+    // current state: verifier
+    // next state: prover
+
+    // permute the nodes' colors however the prover wants (SO NO RULE FOR THIS)
+    
+    // choose random edge 
+    some disj n1, n2 : Node | {
+        n1 in n2.neighbors and n2 in n1.neighbors
+        
+        // selected edge in verifier turn
+        n1 = ProofState.nodeA
+        n2 = ProofState.nodeB
+
+        // In this model, they always choose an edge with different colors
+        n1.color != n2.color
+
+        // we uncover the
+        n1.hat = none
+        n2.hat = none
+        all node : Node | {
+            (node != n1 and node != n2) implies node.hat = Hat
+        }
+    }
+
+    // maintain injectivity (better? - Khalil)
+    all disj n1, n2 : Node | {
+        all disj c1, c2 : Color | n1.color = c1 and n2.color = c2 implies {
+            n1.color' != n2.color'
+        }
+    }
+}
+
+pred moveInvalid {
+    ProofState.turn = Prover implies ProofState.turn' = Verifier
+    ProofState.turn = Verifier implies ProofState.turn' = Prover
+
+    ProofState.turn = Prover implies proverToVerifier 
+    ProofState.turn = Verifier implies verifierToProverInvalid
+}
 
 pred invalidTraces{
-    
+    init
+    validGraph
+    not validThreeColor
+    always moveInvalid
 }
 
 // run statement for testing
-run {
-    // validGraph
-    // validThreeColor
-    validTraces
-} for exactly 6 Node
+// run {
+//     // validTraces
+//     invalidTraces
+// } for exactly 6 Node
+
+pred successfulChallenge {
+    (no ProofState.nodeA and no ProofState.nodeB) or (ProofState.nodeA.color != ProofState.nodeB.color)
+}
+
+test expect {
+    notSound: {
+        invalidTraces
+        always successfulChallenge
+    } is sat
+
+    SoundCaught: {
+        invalidTraces
+        eventually successfulChallenge
+    } is sat
+
+    complete: {
+        validTraces implies always successfulChallenge
+    } is theorem
+}
