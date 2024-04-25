@@ -9,6 +9,64 @@ const NODE_RAD = 22;
 const CEN_X = 300;
 const CEN_Y = 300;
 
+var current_state = 0;
+
+function cs() {
+  return current_state;
+}
+
+// var dbg = new TextBox({
+//     text: instances[0].atoms(),
+//     coords: { x: 100, y: 100 },
+//     fontSize: 5,
+//     fontWeight: "bold",
+//   });
+// stage.add(dbg);
+
+var state_label = new TextBox({
+  text: () => cs(),
+  coords: { x: 300, y: 520 },
+  fontSize: 15,
+  fontWeight: "Bold",
+  color: "black",
+});
+stage.add(state_label);
+
+var button = new TextBox({
+  text: "▬",
+  color: "gray",
+  coords: { x: 300, y: 550 },
+  fontSize: 200,
+  events: [
+    {
+      event: "click",
+      callback: function (ele, ev, d) {
+        current_state += 1;
+        stage.render(svg);
+      },
+    },
+  ],
+});
+stage.add(button);
+
+var button_label = new TextBox({
+  text: "Next State",
+  coords: { x: 300, y: 570 },
+  fontSize: 20,
+  fontWeight: "Bold",
+  color: "white",
+  events: [
+    {
+      event: "click",
+      callback: function (ele, ev, d) {
+        current_state += 1;
+        stage.render(svg);
+      },
+    },
+  ],
+});
+stage.add(button_label);
+
 const nodes = Node.atoms().map((ltup) => fam(ltup));
 const num_nodes = nodes.length;
 const degrees = 360 / num_nodes;
