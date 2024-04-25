@@ -11,16 +11,18 @@ one sig Red extends Color {}
 one sig Green extends Color {}
 one sig Blue extends Color {}
 
+one sig Hat{}
+
 // nodes in the graph
 sig Node {
     // set of nodes that it connects to
     neighbors : set Node,
 
     // each node has one color 
-    var color: one Color
+    var color: one Color,
 
     // visibility field
-    // lone var hat : Hat
+    var hat : lone Hat
 }
 
 abstract sig Participant {}
@@ -62,6 +64,9 @@ pred validThreeColor {
 }
 
 pred verifierToProver {
+    // current state: verifier
+    // next state: prover
+
     // permute the nodes' colors
     all c1 : Color, node : Node | {
         some c2 : Color | {
@@ -74,9 +79,18 @@ pred verifierToProver {
     // choose random edge 
     some disj n1, n2 : Node | {
         n1 in n2.neighbors and n2 in n1.neighbors
-        // Selected edge in verifier turn
+        
+        // selected edge in verifier turn
         n1 = ProofState.nodeA
         n2 = ProofState.nodeB
+
+        // we uncover the
+        n1.hat = none
+        n2.hat = none
+        all node:Node|{
+            {node!=n1 and node!=n2} implies node.hat = Hat
+
+        }
     }
 
     // maintain injectivity (better? - Khalil)
@@ -85,16 +99,23 @@ pred verifierToProver {
             n1.color' != n2.color'
         }
     }
+
+    
 }
 
 pred proverToVerifier {
+    // current state: prover
+    // next state: verifier
+
     ProofState.nodeA = none
     ProofState.nodeB = none
 
     // frame condition: all nodes have to stay the same color
     all node: Node | {
         node.color = node.color'
+        node.hat = none
     }
+
 }
 
 pred init {
