@@ -151,9 +151,6 @@ pred verifierToProverInvalid {
         n1 = ProofState.nodeA
         n2 = ProofState.nodeB
 
-        // In this model, they always choose an edge with different colors
-        n1.color != n2.color
-
         // we uncover the
         n1.hat = none
         n2.hat = none
@@ -191,22 +188,28 @@ pred invalidTraces{
 //     invalidTraces
 // } for exactly 6 Node
 
-pred successfulChallenge {
-    (no ProofState.nodeA and no ProofState.nodeB) or (ProofState.nodeA.color != ProofState.nodeB.color)
+pred passesChallenge {
+    (no ProofState.nodeA and no ProofState.nodeB) or
+    ProofState.nodeA.color != ProofState.nodeB.color
+}
+
+pred failsChallenge {
+    some ProofState.nodeA.color and some ProofState.nodeB.color
+    ProofState.nodeA.color = ProofState.nodeB.color
 }
 
 test expect {
     notSound: {
         invalidTraces
-        always successfulChallenge
+        always passesChallenge
     } is sat
 
-    SoundCaught: {
+    canBeSoundt: {
         invalidTraces
-        eventually successfulChallenge
+        eventually failsChallenge
     } is sat
 
     complete: {
-        validTraces implies always successfulChallenge
+        validTraces implies always passesChallenge
     } is theorem
 }
