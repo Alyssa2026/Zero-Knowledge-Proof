@@ -32,8 +32,8 @@ one sig ProofState {
     var turn : one Participant,
     
     // challenged edge
-    var nodeA: one Node,
-    var nodeB: one Node
+    var nodeA: lone Node,
+    var nodeB: lone Node
 }
 
 // create a valid graph 
@@ -69,6 +69,9 @@ pred proverTurn {
             node.color = c1 implies node.color' = c2
         }
     }
+
+    ProofState.nodeA = none
+    ProofState.nodeB = none
 
     // maintain injectivity (better? - Khalil)
     all disj n1, n2 : Node | {
@@ -124,5 +127,3 @@ run {
     // validThreeColor
     validTraces
 } for exactly 6 Node
-
-
