@@ -190,7 +190,8 @@ pred invalidTraces{
 // run statement for testing
 run {
     validTraces
-    // invalidTraces
+    //invalidTraces
+    //always passesChallenge
 } for exactly 6 Node
 
 pred passesChallenge {
