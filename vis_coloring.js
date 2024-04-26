@@ -7,65 +7,102 @@ const stage = new Stage();
 const RAD = 150;
 const NODE_RAD = 22;
 const CEN_X = 300;
-const CEN_Y = 300;
+const CEN_Y = 250;
 
 var current_state = 0;
 
 function cs() {
-  return current_state;
+  return `Current State: ${current_state}`;
 }
 
-// var dbg = new TextBox({
-//     text: instances[0].atoms(),
-//     coords: { x: 100, y: 100 },
-//     fontSize: 5,
-//     fontWeight: "bold",
-//   });
-// stage.add(dbg);
+function incrementState() {
+  current_state += 1;
+  stage.render(svg);
+}
+
+function decrementState() {
+  if (current_state != 0) {
+    current_state -= 1;
+  }
+  stage.render(svg);
+}
 
 var state_label = new TextBox({
   text: () => cs(),
-  coords: { x: 300, y: 520 },
-  fontSize: 15,
+  coords: { x: 300, y: 500 },
+  fontSize: 20,
   fontWeight: "Bold",
   color: "black",
 });
 stage.add(state_label);
 
-var button = new TextBox({
+// PREV BUTTON
+var prev_button = new TextBox({
   text: "▬",
   color: "gray",
-  coords: { x: 300, y: 550 },
+  coords: { x: 225, y: 550 },
   fontSize: 200,
   events: [
     {
       event: "click",
       callback: function (ele, ev, d) {
-        current_state += 1;
-        stage.render(svg);
+        decrementState();
       },
     },
   ],
 });
-stage.add(button);
+stage.add(prev_button);
 
-var button_label = new TextBox({
-  text: "Next State",
-  coords: { x: 300, y: 570 },
-  fontSize: 20,
+var prev_button_label = new TextBox({
+  text: "Previous State",
+  coords: { x: 225, y: 570 },
+  fontSize: 15,
   fontWeight: "Bold",
   color: "white",
   events: [
     {
       event: "click",
       callback: function (ele, ev, d) {
-        current_state += 1;
-        stage.render(svg);
+        decrementState();
       },
     },
   ],
 });
-stage.add(button_label);
+stage.add(prev_button_label);
+
+// NEXT BUTTON
+var next_button = new TextBox({
+  text: "▬",
+  color: "gray",
+  coords: { x: 375, y: 550 },
+  fontSize: 200,
+  events: [
+    {
+      event: "click",
+      callback: function (ele, ev, d) {
+        incrementState();
+      },
+    },
+  ],
+});
+stage.add(next_button);
+
+var next_button_label = new TextBox({
+  text: "Next State",
+  coords: { x: 375, y: 570 },
+  fontSize: 15,
+  fontWeight: "Bold",
+  color: "white",
+  events: [
+    {
+      event: "click",
+      callback: function (ele, ev, d) {
+        incrementState();
+      },
+    },
+  ],
+});
+stage.add(next_button_label);
 
 const nodes = Node.atoms().map((ltup) => fam(ltup));
 const num_nodes = nodes.length;
