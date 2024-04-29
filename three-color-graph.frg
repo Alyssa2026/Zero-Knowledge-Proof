@@ -1,5 +1,6 @@
 #lang forge/temporal
-option run_sterling "./vis_coloring.js"
+
+option run_sterling "vis_coloring.js"
 
 option max_tracelength 32
 option min_tracelength 32
@@ -68,10 +69,12 @@ pred verifierToProver {
     // next state: prover
 
     // permute the nodes' colors
-    all c1 : Color, node : Node | {
-        some c2 : Color | {
-            // NOTE: c1 and c2 can be the same
-            node.color = c1 implies node.color' = c2
+    all c1 : Color {
+        one c2 : Color | {
+            all node: Node | {
+                // NOTE: c1 and c2 can be the same
+                node.color = c1 implies node.color' = c2
+            }
         }
     }
 
@@ -161,8 +164,10 @@ pred verifierToProverInvalid {
 
     // maintain injectivity (better? - Khalil)
     all disj n1, n2 : Node | {
-        all disj c1, c2 : Color | n1.color = c1 and n2.color = c2 implies {
-            n1.color' != n2.color'
+        all disj c1, c2 : Color | {
+            n1.color = c1 and n2.color = c2 implies {
+                n1.color' != n2.color'
+            }
         }
     }
 }
@@ -183,10 +188,11 @@ pred invalidTraces{
 }
 
 // run statement for testing
-// run {
-//     // validTraces
-//     invalidTraces
-// } for exactly 6 Node
+run {
+    validTraces
+    //invalidTraces
+    //always passesChallenge
+} for exactly 6 Node
 
 pred passesChallenge {
     (no ProofState.nodeA and no ProofState.nodeB) or
