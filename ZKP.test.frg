@@ -96,11 +96,137 @@ test suite for validGraph{
         // A node that is not symmetric is not valid
         notSymmetricInvalid:{validGraph and notSymmetric} is unsat
     }
+}
 
+// Tests for creating valid three color graph
+
+// Positive predicates 
+// All neighboring colors must be different
+pred colorDiff{
+    all n1, n2 : Node | {
+        n1 in n2.neighbors implies {
+            n2.color != n1.color
+        }
+    }
+}
+
+// Negative predicates 
+pred sharingColor{
+    some disj n1, n2:Node|{
+        n1 in n2.neighbors
+        n2 in n1.neighbors
+        n1.color = n2.color
+    }
+}
+
+test suite for validThreeColor{
+    // Positive tests
+    // All neighboring colors must be different
+    assert colorDiff is necessary for validThreeColor
+    assert validThreeColor is sufficient for colorDiff
+
+    test expect{
+        // An empty three color is valid 
+        emptyThreeColorGraphValid:{emptyGraph and validThreeColor} is sat
+    }
+
+    // Negative test
+    test expect{
+        // neighbors sharing color is invalid
+        sharingColorInvalid: {validThreeColor and sharingColor } is unsat
+    }
+}
+
+// Tests the moves when the prover is telling the truth 
+
+// Positive predicates 
+// The graph colors must be "permutated"
+pred permutateGraph{
+     all c1 : Color {
+        one c2 : Color | {
+            all node: Node | {
+                // NOTE: c1 and c2 can be the same
+                node.color = c1 implies node.color' = c2
+            }
+        }
+    }
+    all disj n1, n2 : Node | {
+        all disj c1, c2 : Color | n1.color = c1 and n2.color = c2 implies {
+            n1.color' != n2.color'
+        }
+    }
+}
+// Verifier must choose a random edge
+pred chooseRandomEdge{
+    some disj n1, n2 : Node | {
+        n1 in n2.neighbors and n2 in n1.neighbors
+        
+        // selected edge in verifier turn
+        n1 = ProofState.nodeA
+        n2 = ProofState.nodeB
+
+        // we uncover the
+        n1.hat = none
+        n2.hat = none
+        all node : Node | {
+            (node != n1 and node != n2) implies node.hat = Hat
+        }
+    }
+}
+// The graph does not have to change next state
+pred sameGraphValid{
+     all n1: Node | {
+        n1.color' = n1.color
+    }
+}
+// The graph colors can change next state
+pred notSameGraphValid{
+    all n1, n2: Node | {
+       n1.color' != n1.color
+    }
+}
+// The edge picked has neighboring ndoes
+pred pickRandomEdge{
+    validGraph
+    validThreeColor
+    some n1,n2:Node|{
+        n1 = ProofState.nodeA and  n2 = ProofState.nodeA implies n2 in n1.neighbors and n1 in n2.neighbors
+    }
+}
+// Negative predicates 
+// The graph permutation is invalid 
+pred invalidPermutation{
+   some n1: Node | {
+        #{n1.color} != #{n1.color'}
+    }
+}
+
+test suite for verifierToProver{
+    // Positive tests
+    // The graph must be permutated
+    assert permutateGraph is necessary for verifierToProver
+    assert verifierToProver is sufficient for permutateGraph
+    // verifier must select randome edge 
+    assert chooseRandomEdge is necessary for verifierToProver
+    assert verifierToProver is sufficient for chooseRandomEdge
+
+    test expect{
+        // the graph after permutation can be the same
+        graphNotChangedValid:{sameGraphValid and verifierToProver} is sat
+        // the graph after permutation can NOT be the same
+        graphChangedValid:{notSameGraphValid and verifierToProver} is sat
+        // The edge selected implies teh two edges are nieghbords
+        EdgeNeighborNdde:{pickRandomEdge and verifierToProver} is sat
+    }
+
+    // Negative 
+    test expect{
+        // The graph permutation is invalid 
+        permutationIsInvalid:{invalidPermutation and verifierToProver} is unsat
+    }
 }
 
 
 
 
 
-// invalid --> Khalil
