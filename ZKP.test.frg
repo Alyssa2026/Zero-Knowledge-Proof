@@ -238,11 +238,12 @@ test suite for verifierToProver {
     }
 }
 
-test suite for proverToVerifier {
-    
+// no edge is selected in proof state
+pred noSelectedEdge {
+    ProofState.nodeA = none
+    ProofState.nodeB = none
 }
 
-
-
-
-
+test suite for proverToVerifier {
+    assert proverToVerifier is sufficient for noSelectedEdge
+}

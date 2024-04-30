@@ -115,13 +115,11 @@ pred proverToVerifier {
         node.color = node.color'
         node.hat = none
     }
-
 }
 
 pred init {
     ProofState.turn = Prover
 }
-
 
 pred move {
     ProofState.turn = Prover implies ProofState.turn' = Verifier
