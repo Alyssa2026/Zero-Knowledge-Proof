@@ -172,7 +172,7 @@ pred chooseRandomEdge {
         n1 = ProofState.nodeA
         n2 = ProofState.nodeB
 
-        // we uncover the
+        // we uncover the nodes
         n1.hat = none
         n2.hat = none
         all node : Node | {
@@ -180,18 +180,21 @@ pred chooseRandomEdge {
         }
     }
 }
+
 // The graph does not have to change next state
 pred sameGraphValid {
      all n1 : Node | {
         n1.color' = n1.color
     }
 }
+
 // The graph colors can change next state
 pred notSameGraphValid {
     all n1, n2 : Node | {
        n1.color' != n1.color
     }
 }
+
 // The edge picked has neighboring ndoes
 pred pickRandomEdge {
     validGraph
@@ -200,6 +203,7 @@ pred pickRandomEdge {
         n1 = ProofState.nodeA and  n2 = ProofState.nodeA implies n2 in n1.neighbors and n1 in n2.neighbors
     }
 }
+
 // Negative predicates 
 // The graph permutation is invalid 
 pred invalidPermutation {
@@ -234,7 +238,9 @@ test suite for verifierToProver {
     }
 }
 
-
+test suite for proverToVerifier {
+    
+}
 
 
 

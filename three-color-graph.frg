@@ -210,7 +210,7 @@ test expect {
         always passesChallenge
     } is sat
 
-    canBeSoundt: {
+    canBeSound: {
         invalidTraces
         eventually failsChallenge
     } is sat
