@@ -6,8 +6,8 @@ open "three-color-graph.frg"
 
 // Positive predicates
 // There are no self loops
-pred noSelfLoops{
-    all n1,n2:Node|{
+pred noSelfLoops {
+    all n1, n2 : Node | {
          n1 = n2 implies (n1 not in n2.neighbors and n2 not in n1.neighbors)
     }
 }
