@@ -126,7 +126,7 @@ pred sharingColor {
     }
 }
 
-test suite for validThreeColor{
+test suite for validThreeColor {
     // Positive tests
     // All neighboring colors must be different
     assert colorDiff is necessary for validThreeColor
@@ -147,7 +147,7 @@ test suite for validThreeColor{
 // Tests the moves when the prover is telling the truth 
 
 // Positive predicates 
-// The graph colors must be "permutated"
+// The graph colors must be "permuted"
 pred permutateGraph {
      all c1 : Color {
         one c2 : Color | {
@@ -213,6 +213,7 @@ test suite for verifierToProver {
     // The graph must be permutated
     assert permutateGraph is necessary for verifierToProver
     assert verifierToProver is sufficient for permutateGraph
+    
     // verifier must select randome edge 
     assert chooseRandomEdge is necessary for verifierToProver
     assert verifierToProver is sufficient for chooseRandomEdge
@@ -229,7 +230,7 @@ test suite for verifierToProver {
     // Negative 
     test expect {
         // The graph permutation is invalid 
-        permutationIsInvalid:{invalidPermutation and verifierToProver} is unsat
+        permutationIsInvalid : {invalidPermutation and verifierToProver} is unsat
     }
 }
 
