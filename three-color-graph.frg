@@ -78,7 +78,6 @@ pred verifierToProver {
         }
     }
 
-    
     // choose random edge 
     some disj n1, n2 : Node | {
         n1 in n2.neighbors and n2 in n1.neighbors
