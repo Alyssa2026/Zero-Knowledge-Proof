@@ -300,9 +300,15 @@ test suite for move {
 
 
 test suite for validTraces {
-
     test expect {
         // vacuity
         validTracesIsSat : {validTraces} is sat
+    }
+}
+
+test suite for verifierToProverInvalid {
+    test expect {
+        // vacuity 
+        verifierToProverInvalidIsSat : {verifierToProverInvalid} is sat
     }
 }
