@@ -295,4 +295,14 @@ test suite for move {
         // vacuity in perpetuity
         alwaysMoveIsSat : {init always {move}} is sat
     }
+} 
+
+
+
+test suite for validTraces {
+
+    test expect {
+        // vacuity
+        validTracesIsSat : {validTraces} is sat
+    }
 }

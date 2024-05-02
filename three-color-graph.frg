@@ -138,7 +138,7 @@ pred validTraces {
     always move
 }
 
-// INVALID 
+// INVALID CASE
 
 pred verifierToProverInvalid {
     // current state: verifier
