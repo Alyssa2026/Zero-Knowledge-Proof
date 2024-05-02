@@ -298,13 +298,16 @@ test suite for move {
 } 
 
 
-
 test suite for validTraces {
     test expect {
         // vacuity
         validTracesIsSat : {validTraces} is sat
     }
 }
+
+
+// tests to come...
+
 
 test suite for verifierToProverInvalid {
     test expect {
@@ -313,7 +316,18 @@ test suite for verifierToProverInvalid {
     }
 }
 
+pred stateAlignsInvalid {
+    ProofState.turn = Prover implies proverToVerifier
+    ProofState.turn = Verifier implies verifierToProverInvalid
+}
+
 test suite for moveInvalid {
     // asserts
-    assert moveInvalid is sufficient for stateAligns
+    assert moveInvalid is sufficient for switching
+    assert moveInvalid is sufficient for stateAlignsInvalid
+
+    test expect {
+        // vacuity
+        moveInvalidIsSat : {moveInvalid} is sat
+    }
 }
