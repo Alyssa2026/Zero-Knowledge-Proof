@@ -312,3 +312,8 @@ test suite for verifierToProverInvalid {
         verifierToProverInvalidIsSat : {verifierToProverInvalid} is sat
     }
 }
+
+test suite for moveInvalid {
+    // asserts
+    assert moveInvalid is sufficient for stateAligns
+}
