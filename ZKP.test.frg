@@ -245,5 +245,8 @@ pred noSelectedEdge {
 }
 
 test suite for proverToVerifier {
+    // assert tests
     assert proverToVerifier is sufficient for noSelectedEdge
+
+
 }
