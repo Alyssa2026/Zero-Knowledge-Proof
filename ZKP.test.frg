@@ -329,5 +329,7 @@ test suite for moveInvalid {
     test expect {
         // vacuity
         moveInvalidIsSat : {moveInvalid} is sat
+        // vacuity in perpetuity
+        alwaysMoveInvalidIsSat : {init always {moveInvalid}} is sat
     }
 }
