@@ -297,7 +297,6 @@ test suite for move {
     }
 } 
 
-
 test suite for validTraces {
     test expect {
         // vacuity
