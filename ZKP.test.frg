@@ -267,7 +267,32 @@ test suite for proverToVerifier {
     test expect {
         // vacuity test
         proverToVerifierSat : {proverToVerifier} is sat
+        // sat with init
+        initProverToVerifierSat : {init proverToVerifier} is sat
     }
 }
 
+// the game state is never the same twice in a row
+pred switching {
+    ProofState.turn = Prover implies ProofState.turn' != Prover
+}
 
+// Prover state means proverToVerifier
+// Verifier state means verifierToProver
+pred stateAligns {
+    ProofState.turn = Prover implies proverToVerifier
+    ProofState.turn = Verifier implies verifierToProver
+}
+
+test suite for move {
+    // asserts
+    assert move is sufficient for switching
+    assert move is sufficient for stateAligns
+
+    test expect {
+        // vacuity test
+        moveIsSat : {move} is sat
+        // vacuity in perpetuity
+        alwaysMoveIsSat : {init always {move}} is sat
+    }
+}
