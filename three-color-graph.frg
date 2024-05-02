@@ -210,6 +210,7 @@ pred failsChallenge {
     ProofState.nodeA.color = ProofState.nodeB.color
 }
 
+// proves some interesting properties we expect of our proof system
 test expect {
     notSound: {
         invalidTraces
