@@ -244,9 +244,30 @@ pred noSelectedEdge {
     ProofState.nodeB = none
 }
 
+// all colors stay the same
+pred sameColors {
+    all n : Node | {
+        n.color = n.color'
+    }
+}
+
+// all hats are cleared
+pred clearedHats {
+    all n : Node | {
+        n.hat = none
+    }
+}
+
 test suite for proverToVerifier {
     // assert tests
     assert proverToVerifier is sufficient for noSelectedEdge
+    assert proverToVerifier is sufficient for sameColors
+    assert proverToVerifier is sufficient for clearedHats
 
-
+    test expect {
+        // vacuity test
+        proverToVerifierSat : {proverToVerifier} is sat
+    }
 }
+
+
