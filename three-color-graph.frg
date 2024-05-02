@@ -2,8 +2,11 @@
 
 option run_sterling "vis_coloring.js"
 
-option max_tracelength 32
-option min_tracelength 32
+// We constrain for this example to m = 5 edges.
+// We must have m^2 trials, so 25 trials. Each trial spans two states, so we
+// must have traces of length 25*2 = 50. 
+option max_tracelength 50
+option min_tracelength 50
 
 ---------- Definitions ----------
 // color of the Node 
@@ -184,12 +187,18 @@ pred invalidTraces{
     always moveInvalid
 }
 
+pred fiveEdges{
+    // Neighbor relation goes both ways, and 5 * 2 = 10
+    #{n1, n2: Node | n2 in n1.neighbors} = 10
+}
+
 // run statement for testing
 run {
-    validTraces
-    //invalidTraces
-    //always passesChallenge
-} for exactly 6 Node
+    fiveEdges
+    // validTraces
+    invalidTraces
+    always passesChallenge
+} for exactly 6 Node, 6 Int
 
 pred passesChallenge {
     (no ProofState.nodeA and no ProofState.nodeB) or
