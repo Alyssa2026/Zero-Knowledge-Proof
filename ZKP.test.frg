@@ -2,6 +2,61 @@
 
 open "three-color-graph.frg"
 
+
+-----------------------------------------------------------
+------------- TESTS FOR THE MODEL AS A WHOLE --------------
+-----------------------------------------------------------
+
+test expect {
+    // Valid traces are possible
+    validTracesCombination : {
+        init
+        validGraph
+        validThreeColor
+        always move
+    } is sat
+    // Invalid traces are possible
+    invalidTracesCombination : {
+        init
+        validGraph
+        not validThreeColor
+        always moveInvalid
+    } is sat
+    // Always passing challenge with five edges is possible
+    fiveEdgesValidSat : {
+        fiveEdges
+        validTraces
+        always passesChallenge
+    } for 6 Node, 6 Int is sat
+    // Always passing challenge with valid graph of five edges is theorem
+    fiveEdgesValidTheorem : {
+        {fiveEdges and validTraces} implies {
+            always passesChallenge
+        }
+    } for 6 Node, 6 Int is theorem
+    // Always passing challenge with invalid graph of five edges is sat
+    fiveEdgesInvalidNotCaught : {
+        fiveEdges
+        invalidTraces
+        always passesChallenge
+    } for 6 Node, 6 Int is sat
+    // Eventually failing challenge with invalid graph of five edges is sat
+    fiveEdgesInvalidCaught : {
+        fiveEdges
+        invalidTraces
+        eventually failsChallenge
+    } for 6 Node, 6 Int is sat
+    // Cannot both always pass and eventually fail
+    caughtOrNot : {
+        always passesChallenge
+        eventually failsChallenge
+    } is unsat
+}
+
+-----------------------------------------------------------
+----------- TEST SUITES FOR SPECIFIC PREDICATES -----------
+-----------------------------------------------------------
+
 // Creating valid graphs tests
 
 // Positive predicates
@@ -304,10 +359,6 @@ test suite for validTraces {
     }
 }
 
-
-// tests to come...
-
-
 test suite for verifierToProverInvalid {
     test expect {
         // vacuity 
@@ -330,5 +381,30 @@ test suite for moveInvalid {
         moveInvalidIsSat : {moveInvalid} is sat
         // vacuity in perpetuity
         alwaysMoveInvalidIsSat : {init always {moveInvalid}} is sat
+    }
+}
+
+pred someEdges {
+    some n1, n2: Node | {
+        n2 in n1.neighbors
+        n1 in n2.neighbors
+    }
+}
+
+pred fourEdges {
+     #{n1, n2: Node | n2 in n1.neighbors} = 8
+}
+
+test suite for fiveEdges {
+    // asserts
+    assert fiveEdges is sufficient for someEdges for 6 Int
+
+    test expect {
+        // vacuity 
+        fiveEdgesTest : {fiveEdges} for 6 Int is sat 
+        // vacuity in perpetuity
+        alwaysFiveEdges : {init always {fiveEdges}} for 6 Int is sat 
+        // cannot be four edges
+        notFourEdges : {fourEdges fiveEdges} for 6 Int is unsat
     }
 }

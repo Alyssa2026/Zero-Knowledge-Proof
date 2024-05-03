@@ -8,7 +8,10 @@ option run_sterling "vis_coloring.js"
 option max_tracelength 50
 option min_tracelength 50
 
----------- Definitions ----------
+-----------------------------------------------------------
+---------------------- SIGNATURES -------------------------
+-----------------------------------------------------------
+
 // color of the Node 
 abstract sig Color {}
 one sig Red extends Color {}
@@ -42,6 +45,10 @@ one sig ProofState {
     var nodeB: lone Node
 }
 
+-----------------------------------------------------------
+------------------ GENERAL PREDICATES ---------------------
+-----------------------------------------------------------
+
 // create a valid graph 
 pred validGraph {
     all disj n1, n2: Node | {
@@ -66,6 +73,14 @@ pred validThreeColor {
         }
     }
 }
+
+pred init {
+    ProofState.turn = Prover
+}
+
+-----------------------------------------------------------
+-------------- PREDICATES FOR HONEST PROVER ---------------
+-----------------------------------------------------------
 
 pred verifierToProver {
     // current state: verifier
@@ -119,10 +134,6 @@ pred proverToVerifier {
     }
 }
 
-pred init {
-    ProofState.turn = Prover
-}
-
 pred move {
     ProofState.turn = Prover implies ProofState.turn' = Verifier
     ProofState.turn = Verifier implies ProofState.turn' = Prover
@@ -138,7 +149,9 @@ pred validTraces {
     always move
 }
 
-// INVALID CASE
+-----------------------------------------------------------
+------------ PREDICATES FOR DISHONEST PROVER --------------
+-----------------------------------------------------------
 
 pred verifierToProverInvalid {
     // current state: verifier
@@ -187,10 +200,17 @@ pred invalidTraces{
     always moveInvalid
 }
 
+// For our examples, we are constraining to 5 edges so that we can hard-code
+// the tracelength as 50 (5^2 = 25, 25 * 2 = 50 because in each trial, of which
+// we must have edges^2, there are two states, the prover and verifier).
 pred fiveEdges{
     // Neighbor relation goes both ways, and 5 * 2 = 10
     #{n1, n2: Node | n2 in n1.neighbors} = 10
 }
+
+-----------------------------------------------------------
+------------------------- RUN! ----------------------------
+-----------------------------------------------------------
 
 // run statement for testing
 run {
@@ -199,6 +219,10 @@ run {
     invalidTraces
     always passesChallenge
 } for exactly 6 Node, 6 Int
+
+-----------------------------------------------------------
+------------- INTERESTING PROPERTIES OF ZKPS --------------
+-----------------------------------------------------------
 
 pred passesChallenge {
     (no ProofState.nodeA and no ProofState.nodeB) or
@@ -210,18 +234,23 @@ pred failsChallenge {
     ProofState.nodeA.color = ProofState.nodeB.color
 }
 
-// proves some interesting properties we expect of our proof system
+// Proves some interesting properties we expect of our proof system
 test expect {
+    // Proving unsoundness:
+    // It is possible that a dishonest prover will always pass the verifier's challenges
     notSound: {
         invalidTraces
         always passesChallenge
     } is sat
 
+    // Demonstrating that being caught is possible
     canBeSound: {
         invalidTraces
         eventually failsChallenge
     } is sat
 
+    // Proving completeness:
+    // An honest prover will always pass the verifier's challenges and convince the verifier
     complete: {
         validTraces implies always passesChallenge
     } is theorem
