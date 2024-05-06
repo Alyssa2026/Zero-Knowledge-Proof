@@ -371,7 +371,7 @@ test suite for validTraces {
     }
 }
 
-// TESTS HERE
+// TESTS HERE FOR VERIFIERTOPROVERINVALID
 
 
 test suite for verifierToProverInvalid {
@@ -401,6 +401,23 @@ test suite for moveInvalid {
     }
 }
 
+// the prover/verifier always takes an INVALID move every state
+pred alwaysMove {
+    always {invalidMove}
+}
+
+// the graph is always NOT a valid three coloring
+pred notValidColoring {
+    always {not validThreeColoring}
+}
+
+test suite for invalidTraces {
+
+}
+
+
+
+
 // there are some edges in the graph --- i.e. nodes who have each other in neighbors
 pred someEdges {
     some n1, n2: Node | {
@@ -428,3 +445,11 @@ test suite for fiveEdges {
         notFourEdges : {fourEdges fiveEdges} for 6 Int is unsat
     }
 }
+
+// test suite for passesChallenge {
+
+// }
+
+// test suite for failsChallenge {
+
+// }
