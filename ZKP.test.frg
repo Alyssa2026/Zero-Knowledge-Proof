@@ -455,9 +455,9 @@ test suite for fiveEdges {
     }
 }
 
-// test suite for passesChallenge {
+test suite for passesChallenge {
 
-// }
+}
 
 // test suite for failsChallenge {
 
