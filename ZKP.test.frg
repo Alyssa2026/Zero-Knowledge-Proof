@@ -353,6 +353,8 @@ test suite for move {
 } 
 
 test suite for validTraces {
+    // individual predicates already tested, expectations for lack of soundness,
+    // completeness and more in main file
     test expect {
         // vacuity
         validTracesIsSat : {validTraces} is sat

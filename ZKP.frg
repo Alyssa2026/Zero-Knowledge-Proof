@@ -175,7 +175,7 @@ pred verifierToProverInvalid {
         }
     }
 
-    // maintain injectivity (better? - Khalil)
+    // maintain injectivity
     all disj n1, n2 : Node | {
         all disj c1, c2 : Color | {
             n1.color = c1 and n2.color = c2 implies {
