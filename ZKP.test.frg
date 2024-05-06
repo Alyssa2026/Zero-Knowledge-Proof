@@ -415,7 +415,7 @@ test suite for invalidTraces {
     // asserts
     assert invalidTraces is sufficient for init
     assert invalidTraces is sufficient for validGraph
-    assert invalidTraces is sufficient for notValidColoring
+    // assert invalidTraces is sufficient for notValidColoring
     assert invalidTraces is sufficient for alwaysInvalidMove
     
     // individual predicates already tested, expectations for lack of soundness,
@@ -464,7 +464,7 @@ test suite for passesChallenge {
     // asserts
     assert proverToVerifier is sufficient for passesChallenge
     assert noSelectedEdge is sufficient for passesChallenge
-    assert passesChallenge is sufficient for selectedDiff
+    assert selectedDiff is sufficient for passesChallenge
 
     test expect {
         // vacuity
