@@ -489,6 +489,6 @@ test suite for failsChallenge {
 
     test expect {
         // vacuity
-        passesChallengeIsSat: {failsChallenge} is sat
+        failsChallengeIsSat: {failsChallenge} is sat
     }
 }
