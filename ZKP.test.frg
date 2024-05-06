@@ -56,7 +56,7 @@ test expect {
 ---------- TESTING INDIVIDUAL PREDICATE BEHAVIOR ----------
 -----------------------------------------------------------
 
-// Creating valid graphs tests
+// valid graph/prover behavior
 
 // Positive predicates
 // There are no self loops
