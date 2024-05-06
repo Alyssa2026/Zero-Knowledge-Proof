@@ -2,9 +2,8 @@
 
 open "three-color-graph.frg"
 
-
 -----------------------------------------------------------
-------------- TESTS FOR THE MODEL AS A WHOLE --------------
+---------- TESTING INDIVIDUAL PREDICATE BEHAVIOR ----------
 -----------------------------------------------------------
 
 test expect {
@@ -354,7 +353,7 @@ test suite for move {
 
 test suite for validTraces {
     // individual predicates already tested, expectations for lack of soundness,
-    // completeness and more in main file
+    // completeness and more already in main file
     test expect {
         // vacuity
         validTracesIsSat : {validTraces} is sat
