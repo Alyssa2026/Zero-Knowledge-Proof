@@ -3,49 +3,49 @@
 open "three-color-graph.frg"
 
 -----------------------------------------------------------
----------- TESTING INDIVIDUAL PREDICATE BEHAVIOR ----------
+--------------- TESTING FULL MODEL BEHAVIOR ---------------
 -----------------------------------------------------------
 
 test expect {
-    // Valid traces are possible
+    // valid traces are possible
     validTracesCombination : {
         init
         validGraph
         validThreeColor
         always move
     } is sat
-    // Invalid traces are possible
+    // invalid traces are possible
     invalidTracesCombination : {
         init
         validGraph
         not validThreeColor
         always moveInvalid
     } is sat
-    // Always passing challenge with five edges is possible
+    // always passing challenge with five edges is possible
     fiveEdgesValidSat : {
         fiveEdges
         validTraces
         always passesChallenge
     } for 6 Node, 6 Int is sat
-    // Always passing challenge with valid graph of five edges is theorem
+    // always passing challenge with valid graph of five edges is theorem
     fiveEdgesValidTheorem : {
         {fiveEdges and validTraces} implies {
             always passesChallenge
         }
     } for 6 Node, 6 Int is theorem
-    // Always passing challenge with invalid graph of five edges is sat
+    // always passing challenge with invalid graph of five edges is sat
     fiveEdgesInvalidNotCaught : {
         fiveEdges
         invalidTraces
         always passesChallenge
     } for 6 Node, 6 Int is sat
-    // Eventually failing challenge with invalid graph of five edges is sat
+    // eventually failing challenge with invalid graph of five edges is sat
     fiveEdgesInvalidCaught : {
         fiveEdges
         invalidTraces
         eventually failsChallenge
     } for 6 Node, 6 Int is sat
-    // Cannot both always pass and eventually fail
+    // cannot both always pass and eventually fail
     caughtOrNot : {
         always passesChallenge
         eventually failsChallenge
@@ -53,7 +53,7 @@ test expect {
 }
 
 -----------------------------------------------------------
------------ TEST SUITES FOR SPECIFIC PREDICATES -----------
+---------- TESTING INDIVIDUAL PREDICATE BEHAVIOR ----------
 -----------------------------------------------------------
 
 // Creating valid graphs tests
