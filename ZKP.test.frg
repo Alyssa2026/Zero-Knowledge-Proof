@@ -403,12 +403,12 @@ test suite for moveInvalid {
 
 // the prover/verifier always takes an INVALID move every state
 pred alwaysInvalidMove {
-    always {invalidMove}
+    always {moveInvalid}
 }
 
 // the graph is always NOT a valid three coloring
 pred notValidColoring {
-    always {not validThreeColoring}
+    always {not validThreeColor}
 }
 
 test suite for invalidTraces {
