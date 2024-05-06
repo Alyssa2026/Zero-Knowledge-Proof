@@ -371,7 +371,7 @@ test suite for validTraces {
     }
 }
 
-// TESTS HERE FOR VERIFIERTOPROVERINVALID
+
 
 
 test suite for verifierToProverInvalid {
@@ -456,7 +456,7 @@ test suite for fiveEdges {
 }
 
 // the selected edge has nodes of different colors
-pred selectedSame {
+pred selectedDiff {
     ProofState.nodeA.color != ProofState.nodeB.color
 }
 
@@ -464,7 +464,7 @@ test suite for passesChallenge {
     // asserts
     assert proverToVerifier is sufficient for passesChallenge
     assert noSelectedEdge is sufficient for passesChallenge
-    assert passesChallenge is is sufficient for selectedSame
+    assert passesChallenge is sufficient for selectedDiff
 
     test expect {
         // vacuity
@@ -472,6 +472,23 @@ test suite for passesChallenge {
     }
 }
 
-test suite for failsChallenge {
+// there is SOME selected edge
+pred selectedSome {
+    some ProofState.nodeA.color and some ProofState.nodeB.color
+}
 
+// the selected edge has nodes of the same color
+pred selectedSame {
+    ProofState.nodeA.color = ProofState.nodeB.color
+}
+
+test suite for failsChallenge {
+    // asserts
+    assert failsChallenge is sufficient for selectedSame
+    assert failsChallenge is sufficient for selectedSome
+
+    test expect {
+        // vacuity
+        passesChallengeIsSat: {failsChallenge} is sat
+    }
 }
