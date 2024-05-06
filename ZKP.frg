@@ -193,7 +193,7 @@ pred moveInvalid {
     ProofState.turn = Verifier implies verifierToProverInvalid
 }
 
-pred invalidTraces{
+pred invalidTraces {
     init
     validGraph
     not validThreeColor
