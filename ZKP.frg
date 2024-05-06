@@ -17,7 +17,7 @@ abstract sig Color {}
 one sig Red extends Color {}
 one sig Green extends Color {}
 one sig Blue extends Color {}
-
+// A hat to indicate whether or not the player can see the node colors
 one sig Hat{}
 
 // nodes in the graph
@@ -32,10 +32,12 @@ sig Node {
     var hat : lone Hat
 }
 
+// The players participating in the proving processs: prover and verifier
 abstract sig Participant {}
 one sig Prover extends Participant {}
 one sig Verifier extends Participant {}
 
+// Indicate if it is the prover or the verifier's turn within the proving process
 one sig ProofState {
     // tracks current turn
     var turn : one Participant,
@@ -46,7 +48,7 @@ one sig ProofState {
 }
 
 -----------------------------------------------------------
------------------- GENERAL PREDICATES ---------------------
+------------------ GENERAL GRAPH PREDICATES ---------------
 -----------------------------------------------------------
 
 // create a valid graph 
@@ -74,6 +76,7 @@ pred validThreeColor {
     }
 }
 
+// Start the proving process start with the prover that creates a valid or invlaid three coloring
 pred init {
     ProofState.turn = Prover
 }
@@ -82,15 +85,18 @@ pred init {
 -------------- PREDICATES FOR HONEST PROVER ---------------
 -----------------------------------------------------------
 
+// Transition predicate where we permute the 3-coloring graph for the next state (prover)
+// The verifier then chooses a random edge in current state and ensure that the two nodes are not the same
 pred verifierToProver {
     // current state: verifier
     // next state: prover
 
-    // permute the nodes' colors
+    // permute the nodes' colors (each node color is mapped to another color) for the NEXT state
     all c1 : Color {
         one c2 : Color | {
             all node: Node | {
                 // NOTE: c1 and c2 can be the same
+                // Next states color is mapped to another color
                 node.color = c1 implies node.color' = c2
             }
         }
@@ -104,7 +110,7 @@ pred verifierToProver {
         n1 = ProofState.nodeA
         n2 = ProofState.nodeB
 
-        // we uncover the
+        // we uncover the edge's nodes 
         n1.hat = none
         n2.hat = none
         all node : Node | {
@@ -112,7 +118,7 @@ pred verifierToProver {
         }
     }
 
-    // maintain injectivity (better? - Khalil)
+    // maintain injectivity (ensure the color mapped to in next state is only mapped to once) 
     all disj n1, n2 : Node | {
         all disj c1, c2 : Color | n1.color = c1 and n2.color = c2 implies {
             n1.color' != n2.color'
@@ -120,6 +126,8 @@ pred verifierToProver {
     }
 }
 
+// Transition predicate where it is the prover's turn
+// Nodes are now the new permuted colors and they are uncovered
 pred proverToVerifier {
     // current state: prover
     // next state: verifier
@@ -127,13 +135,14 @@ pred proverToVerifier {
     ProofState.nodeA = none
     ProofState.nodeB = none
 
-    // frame condition: all nodes have to stay the same color
+    // frame condition: all nodes have to stay the same color, nodes are notw revealed
     all node: Node | {
         node.color = node.color'
         node.hat = none
     }
 }
 
+// Moving predicate to alternate between participants in each state
 pred move {
     ProofState.turn = Prover implies ProofState.turn' = Verifier
     ProofState.turn = Verifier implies ProofState.turn' = Prover
@@ -142,6 +151,7 @@ pred move {
     ProofState.turn = Verifier implies verifierToProver
 }
 
+// Start with prover, valid three coloring and alternate between players
 pred validTraces {
     init
     validGraph
@@ -152,7 +162,7 @@ pred validTraces {
 -----------------------------------------------------------
 ------------ PREDICATES FOR DISHONEST PROVER --------------
 -----------------------------------------------------------
-
+// Similar to valid v2p but next state has no permuting rules 
 pred verifierToProverInvalid {
     // current state: verifier
     // next state: prover
@@ -185,6 +195,7 @@ pred verifierToProverInvalid {
     }
 }
 
+// Moving predicate to alternate between participants in each state
 pred moveInvalid {
     ProofState.turn = Prover implies ProofState.turn' = Verifier
     ProofState.turn = Verifier implies ProofState.turn' = Prover
@@ -193,6 +204,7 @@ pred moveInvalid {
     ProofState.turn = Verifier implies verifierToProverInvalid
 }
 
+// Start with prover, invalid three coloring and alternate between players
 pred invalidTraces {
     init
     validGraph
@@ -223,12 +235,12 @@ run {
 -----------------------------------------------------------
 ------------- INTERESTING PROPERTIES OF ZKPS --------------
 -----------------------------------------------------------
-
+// Verifier will never catch the prover lying
 pred passesChallenge {
     (no ProofState.nodeA and no ProofState.nodeB) or
     ProofState.nodeA.color != ProofState.nodeB.color
 }
-
+// Verifier will eventually catch the prover lying
 pred failsChallenge {
     some ProofState.nodeA.color and some ProofState.nodeB.color
     ProofState.nodeA.color = ProofState.nodeB.color
@@ -236,20 +248,21 @@ pred failsChallenge {
 
 // Proves some interesting properties we expect of our proof system
 test expect {
-    // Proving unsoundness:
+    // Proving unsoundness: We can "prove" honesty when prover is wrong/lying
     // It is possible that a dishonest prover will always pass the verifier's challenges
     notSound: {
         invalidTraces
         always passesChallenge
     } is sat
 
-    // Demonstrating that being caught is possible
+    //  Proving can be sound: We can can not "prove" honesty when prover is wrong/lying
+    // Demonstrating that being caught is possible when the pover is lying (can be sometimes sund)
     canBeSound: {
         invalidTraces
         eventually failsChallenge
     } is sat
 
-    // Proving completeness:
+    // Proving completeness: We can "prove" honesty when prover is honest
     // An honest prover will always pass the verifier's challenges and convince the verifier
     complete: {
         validTraces implies always passesChallenge
