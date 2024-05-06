@@ -162,7 +162,7 @@ pred validTraces {
 -----------------------------------------------------------
 ------------ PREDICATES FOR DISHONEST PROVER --------------
 -----------------------------------------------------------
-// Similar to valid v2p but next state has no permuting rules 
+// similar to valid v2p but next state has no permuting rules 
 pred verifierToProverInvalid {
     // current state: verifier
     // next state: prover
@@ -195,7 +195,7 @@ pred verifierToProverInvalid {
     }
 }
 
-// Moving predicate to alternate between participants in each state
+// moving predicate to alternate between participants in each state
 pred moveInvalid {
     ProofState.turn = Prover implies ProofState.turn' = Verifier
     ProofState.turn = Verifier implies ProofState.turn' = Prover
@@ -204,7 +204,7 @@ pred moveInvalid {
     ProofState.turn = Verifier implies verifierToProverInvalid
 }
 
-// Start with prover, invalid three coloring and alternate between players
+// start with prover, invalid three coloring and alternate between players
 pred invalidTraces {
     init
     validGraph
@@ -212,7 +212,7 @@ pred invalidTraces {
     always moveInvalid
 }
 
-// For our examples, we are constraining to 5 edges so that we can hard-code
+// for our examples, we are constraining to 5 edges so that we can hard-code
 // the tracelength as 50 (5^2 = 25, 25 * 2 = 50 because in each trial, of which
 // we must have edges^2, there are two states, the prover and verifier).
 pred fiveEdges {
@@ -235,18 +235,18 @@ run {
 -----------------------------------------------------------
 ------------- INTERESTING PROPERTIES OF ZKPS --------------
 -----------------------------------------------------------
-// Verifier will never catch the prover lying
+// verifier will never catch the prover lying
 pred passesChallenge {
     (no ProofState.nodeA and no ProofState.nodeB) or
     ProofState.nodeA.color != ProofState.nodeB.color
 }
-// Verifier will eventually catch the prover lying
+// verifier will eventually catch the prover lying
 pred failsChallenge {
     some ProofState.nodeA.color and some ProofState.nodeB.color
     ProofState.nodeA.color = ProofState.nodeB.color
 }
 
-// Proves some interesting properties we expect of our proof system
+// proves some interesting properties we expect of our proof system
 test expect {
     // Proving unsoundness: We can "prove" honesty when prover is wrong/lying
     // It is possible that a dishonest prover will always pass the verifier's challenges
