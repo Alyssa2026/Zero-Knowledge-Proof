@@ -1,6 +1,6 @@
 #lang forge/temporal
 
-open "three-color-graph.frg"
+open "ZKP.frg"
 
 -----------------------------------------------------------
 --------------- TESTING FULL MODEL BEHAVIOR ---------------
@@ -56,9 +56,8 @@ test expect {
 ---------- TESTING INDIVIDUAL PREDICATE BEHAVIOR ----------
 -----------------------------------------------------------
 
-// valid graph/prover behavior
+// valid graph structure testing
 
-// Positive predicates
 // There are no self loops
 pred noSelfLoops {
     all n1, n2 : Node | {
@@ -66,7 +65,7 @@ pred noSelfLoops {
     }
 }
 
-// A node can reach another node (connectivity)
+// a node can reach another node (connectivity)
 pred everyNodeReaches {
     all disj n1, n2 : Node | {
         // ensures connectivity
@@ -74,7 +73,7 @@ pred everyNodeReaches {
     } 
 }
 
-// Node A reaching node B means node B reaches node A (symmetric)
+// node A reaching node B means node B reaches node A (symmetric)
 pred everyNodeSymmetric {
     all disj n1, n2 : Node | {
         // connection is symmetric 
@@ -82,7 +81,7 @@ pred everyNodeSymmetric {
     } 
 }
 
-// Node A reaching node B and node B reaching node C means node A reaches node C (transitive)
+// node A reaching node B and node B reaching node C means node A reaches node C (transitivity)
 pred nodeTransitive {
     all disj n1, n2, n3 : Node | {
         // connection is transitive
@@ -90,35 +89,35 @@ pred nodeTransitive {
     } 
 }
 
-// An empty graph is valid 
+// an empty graph is valid 
 pred emptyGraph {
     all n : Node | { 
         n = none
     }
 }
-// A full connected graph is valid 
+// a full connected graph is valid 
 pred fullyConnectedValid {
     all n1, n2: Node | {
         n1->n2 in ^neighbors
     }   
 }
 
-// Negative predicates
-// A graph with a self loop in invalid 
+// negative predicates
+// a graph with a self loop in invalid 
 pred selfLoop {
     some n1 : Node | {
         n1 in n1.neighbors
     }
 }
 
-// A graph that is not fully connected in invalid 
+// a graph that is not fully connected in invalid 
 pred cantReach {
     some disj n1, n2 : Node | {
         not n1->n2 in ^neighbors
     }
 }
 
-// A graph where there is no symmetric relationship
+// a graph where there is no symmetric relationship
 pred notSymmetric {
     some n1, n2 : Node | {
         n1 in n2.neighbors 
@@ -127,42 +126,41 @@ pred notSymmetric {
 }
 
 test suite for validGraph {
-    // Positive tests 
-    // There are no self loops within the valid graph
+    // positive tests 
+    // there are no self loops within the valid graph
     assert noSelfLoops is necessary for validGraph
     assert validGraph is sufficient for noSelfLoops
-    // Every node can reach every other node
+    // every node can reach every other node
     assert everyNodeReaches is necessary for validGraph
     assert validGraph is sufficient for everyNodeReaches
-    // Every node is symmetrically reachable 
+    // every node is symmetrically reachable 
     assert everyNodeSymmetric is necessary for validGraph
     assert validGraph is sufficient for everyNodeSymmetric
-    // Every node has transitive relationship 
+    // every node has transitive relationship 
     assert nodeTransitive is necessary for validGraph
     assert validGraph is sufficient for nodeTransitive
 
     test expect{
-        // It is valid to have an empty graph
+        // it is valid to have an empty graph
         emptyGraphValid : {emptyGraph and validGraph} is sat
-        // A graph where every node is a neighbor with another node is valid 
+        // a graph where every node is a neighbor with another node is valid 
         fullConnectedIsValid : {validGraph and fullyConnectedValid} is sat
     }
 
-    // Negative tests
+    // negative tests
     test expect{
-        // Having self loops is not valid
+        // having self loops is not valid
         selfLoopInvalie : {selfLoop and validGraph} is unsat
-        // A node that can not reach another node is not valid
+        // a node that can not reach another node is not valid
         UnreachableInvalid : {validGraph and cantReach} is unsat
-        // A node that is not symmetric is not valid
+        // a node that is not symmetric is not valid
         notSymmetricInvalid : {validGraph and notSymmetric} is unsat
     }
 }
 
-// Tests for creating valid three color graph
+// valid graph 3-coloring testing
 
-// Positive predicates 
-// All neighboring colors must be different
+// all neighboring colors must be different
 pred colorDiff {
     all n1, n2 : Node | {
         n1 in n2.neighbors implies {
@@ -171,7 +169,7 @@ pred colorDiff {
     }
 }
 
-// Negative predicates 
+// should be false --- NO two nodes should share colors
 pred sharingColor {
     some disj n1, n2 : Node | {
         n1 in n2.neighbors
@@ -181,27 +179,26 @@ pred sharingColor {
 }
 
 test suite for validThreeColor {
-    // Positive tests
-    // All neighboring colors must be different
+    // positive tests
+    // all neighboring colors must be different
     assert colorDiff is necessary for validThreeColor
     assert validThreeColor is sufficient for colorDiff
 
     test expect {
-        // An empty three color is valid 
+        // an empty three color is valid 
         emptyThreeColorGraphValid:{emptyGraph and validThreeColor} is sat
     }
 
-    // Negative test
+    // negative test
     test expect {
         // neighbors sharing color is invalid
         sharingColorInvalid: {validThreeColor and sharingColor } is unsat
     }
 }
 
-// Tests the moves when the prover is telling the truth 
+// tests valid prover behavior
 
-// Positive predicates 
-// The graph colors must be "permuted"
+// the graph colors must be "permuted"
 pred permutateGraph {
      all c1 : Color {
         one c2 : Color | {
@@ -217,7 +214,8 @@ pred permutateGraph {
         }
     }
 }
-// Verifier must choose a random edge
+
+// verifier must choose a random edge
 pred chooseRandomEdge {
     some disj n1, n2 : Node | {
         n1 in n2.neighbors and n2 in n1.neighbors
@@ -235,21 +233,21 @@ pred chooseRandomEdge {
     }
 }
 
-// The graph does not have to change next state
+// the graph does not have to change next state
 pred sameGraphValid {
      all n1 : Node | {
         n1.color' = n1.color
     }
 }
 
-// The graph colors can change next state
+// the graph colors can change next state
 pred notSameGraphValid {
     all n1, n2 : Node | {
        n1.color' != n1.color
     }
 }
 
-// The edge picked has neighboring ndoes
+// the edge picked has neighboring ndoes
 pred pickRandomEdge {
     validGraph
     validThreeColor
@@ -258,8 +256,7 @@ pred pickRandomEdge {
     }
 }
 
-// Negative predicates 
-// The graph permutation is invalid 
+// should be false --- the graph permutation should NOT be invalid 
 pred invalidPermutation {
    some n1 : Node | {
         #{n1.color} != #{n1.color'}
@@ -313,7 +310,7 @@ pred clearedHats {
 }
 
 test suite for proverToVerifier {
-    // assert tests
+    // asserts
     assert proverToVerifier is sufficient for noSelectedEdge
     assert proverToVerifier is sufficient for sameColors
     assert proverToVerifier is sufficient for clearedHats
@@ -348,32 +345,51 @@ test suite for move {
         moveIsSat : {move} is sat
         // vacuity in perpetuity
         alwaysMoveIsSat : {init always {move}} is sat
+        // there's perpetual switching
+        alwaysSwitching : {always {move} implies always {switching}} is theorem
     }
 } 
 
+// the prover/verifier take turns every state
+pred alwaysMove {
+    always {move}
+}
+
 test suite for validTraces {
+    // asserts
+    assert validTraces is sufficient for init
+    assert validTraces is sufficient for validGraph
+    assert validTraces is sufficient for validThreeColor
+    assert validTraces is sufficient for alwaysMove
+    
     // individual predicates already tested, expectations for lack of soundness,
     // completeness and more already in main file
+
     test expect {
         // vacuity
         validTracesIsSat : {validTraces} is sat
     }
 }
 
+
+
+
 test suite for verifierToProverInvalid {
-    test expect {
+        test expect {
         // vacuity 
         verifierToProverInvalidIsSat : {verifierToProverInvalid} is sat
     }
 }
 
+// for the invalid case, Prover means proverToVerifier
+// Verifier means verifierToProverInvalid
 pred stateAlignsInvalid {
     ProofState.turn = Prover implies proverToVerifier
     ProofState.turn = Verifier implies verifierToProverInvalid
 }
 
 test suite for moveInvalid {
-    // asserts
+    // assert testing
     assert moveInvalid is sufficient for switching
     assert moveInvalid is sufficient for stateAlignsInvalid
 
@@ -385,6 +401,33 @@ test suite for moveInvalid {
     }
 }
 
+// the prover/verifier always takes an INVALID move every state
+pred alwaysInvalidMove {
+    always {moveInvalid}
+}
+
+// the graph is always NOT a valid three coloring
+pred notValidColoring {
+    always {not validThreeColor}
+}
+
+test suite for invalidTraces {
+    // asserts
+    assert invalidTraces is sufficient for init
+    assert invalidTraces is sufficient for validGraph
+    // assert invalidTraces is sufficient for notValidColoring
+    assert invalidTraces is sufficient for alwaysInvalidMove
+    
+    // individual predicates already tested, expectations for lack of soundness,
+    // completeness and more already in main file
+
+    test expect {
+        // vacuity
+        invalidTracesIsSat : {invalidTraces} is sat
+    }
+}
+
+// there are some edges in the graph --- i.e. nodes who have each other in neighbors
 pred someEdges {
     some n1, n2: Node | {
         n2 in n1.neighbors
@@ -392,6 +435,8 @@ pred someEdges {
     }
 }
 
+// there are exactly 8 pairs (double counting each orientation) who share
+// each other in the neighbor relation
 pred fourEdges {
      #{n1, n2: Node | n2 in n1.neighbors} = 8
 }
@@ -407,5 +452,43 @@ test suite for fiveEdges {
         alwaysFiveEdges : {init always {fiveEdges}} for 6 Int is sat 
         // cannot be four edges
         notFourEdges : {fourEdges fiveEdges} for 6 Int is unsat
+    }
+}
+
+// the selected edge has nodes of different colors
+pred selectedDiff {
+    ProofState.nodeA.color != ProofState.nodeB.color
+}
+
+test suite for passesChallenge {
+    // asserts
+    assert proverToVerifier is sufficient for passesChallenge
+    assert noSelectedEdge is sufficient for passesChallenge
+    assert selectedDiff is sufficient for passesChallenge
+
+    test expect {
+        // vacuity
+        passesChallengeIsSat: {passesChallenge} is sat
+    }
+}
+
+// there is SOME selected edge
+pred selectedSome {
+    some ProofState.nodeA.color and some ProofState.nodeB.color
+}
+
+// the selected edge has nodes of the same color
+pred selectedSame {
+    ProofState.nodeA.color = ProofState.nodeB.color
+}
+
+test suite for failsChallenge {
+    // asserts
+    assert failsChallenge is sufficient for selectedSame
+    assert failsChallenge is sufficient for selectedSome
+
+    test expect {
+        // vacuity
+        passesChallengeIsSat: {failsChallenge} is sat
     }
 }
