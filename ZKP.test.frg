@@ -455,10 +455,23 @@ test suite for fiveEdges {
     }
 }
 
-test suite for passesChallenge {
-
+// the selected edge has nodes of different colors
+pred selectedSame {
+    ProofState.nodeA.color != ProofState.nodeB.color
 }
 
-// test suite for failsChallenge {
+test suite for passesChallenge {
+    // asserts
+    assert proverToVerifier is sufficient for passesChallenge
+    assert noSelectedEdge is sufficient for passesChallenge
+    assert passesChallenge is is sufficient for selectedSame
 
-// }
+    test expect {
+        // vacuity
+        passesChallengeIsSat: {passesChallenge} is sat
+    }
+}
+
+test suite for failsChallenge {
+
+}
