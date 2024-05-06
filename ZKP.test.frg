@@ -415,7 +415,7 @@ test suite for invalidTraces {
     // asserts
     assert invalidTraces is sufficient for init
     assert invalidTraces is sufficient for validGraph
-    // assert invalidTraces is sufficient for notValidColoring
+    assert invalidTraces is sufficient for notValidColoring
     assert invalidTraces is sufficient for alwaysInvalidMove
     
     // individual predicates already tested, expectations for lack of soundness,
