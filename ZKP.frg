@@ -203,7 +203,7 @@ pred invalidTraces {
 // For our examples, we are constraining to 5 edges so that we can hard-code
 // the tracelength as 50 (5^2 = 25, 25 * 2 = 50 because in each trial, of which
 // we must have edges^2, there are two states, the prover and verifier).
-pred fiveEdges{
+pred fiveEdges {
     // Neighbor relation goes both ways, and 5 * 2 = 10
     #{n1, n2: Node | n2 in n1.neighbors} = 10
 }
