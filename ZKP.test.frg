@@ -366,13 +366,15 @@ test suite for verifierToProverInvalid {
     }
 }
 
+// for the invalid case, Prover means proverToVerifier
+// Verifier means verifierToProverInvalid
 pred stateAlignsInvalid {
     ProofState.turn = Prover implies proverToVerifier
     ProofState.turn = Verifier implies verifierToProverInvalid
 }
 
 test suite for moveInvalid {
-    // asserts
+    // assert testing
     assert moveInvalid is sufficient for switching
     assert moveInvalid is sufficient for stateAlignsInvalid
 
@@ -384,6 +386,7 @@ test suite for moveInvalid {
     }
 }
 
+// there are some edges in the graph --- i.e. nodes who have each other in neighbors
 pred someEdges {
     some n1, n2: Node | {
         n2 in n1.neighbors
@@ -391,6 +394,8 @@ pred someEdges {
     }
 }
 
+// there are exactly 8 pairs (double counting each orientation) who share
+// each other in the neighbor relation
 pred fourEdges {
      #{n1, n2: Node | n2 in n1.neighbors} = 8
 }
