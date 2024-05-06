@@ -371,9 +371,6 @@ test suite for validTraces {
     }
 }
 
-
-
-
 test suite for verifierToProverInvalid {
         test expect {
         // vacuity 
