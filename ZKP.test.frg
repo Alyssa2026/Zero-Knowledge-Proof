@@ -402,7 +402,7 @@ test suite for moveInvalid {
 }
 
 // the prover/verifier always takes an INVALID move every state
-pred alwaysMove {
+pred alwaysInvalidMove {
     always {invalidMove}
 }
 
@@ -412,11 +412,20 @@ pred notValidColoring {
 }
 
 test suite for invalidTraces {
+    // asserts
+    assert invalidTraces is sufficient for init
+    assert invalidTraces is sufficient for validGraph
+    assert invalidTraces is sufficient for notValidColoring
+    assert invalidTraces is sufficient for alwaysInvalidMove
+    
+    // individual predicates already tested, expectations for lack of soundness,
+    // completeness and more already in main file
 
+    test expect {
+        // vacuity
+        invalidTracesIsSat : {invalidTraces} is sat
+    }
 }
-
-
-
 
 // there are some edges in the graph --- i.e. nodes who have each other in neighbors
 pred someEdges {
