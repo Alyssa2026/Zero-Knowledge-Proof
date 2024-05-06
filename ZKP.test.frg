@@ -310,7 +310,7 @@ pred clearedHats {
 }
 
 test suite for proverToVerifier {
-    // assert tests
+    // asserts
     assert proverToVerifier is sufficient for noSelectedEdge
     assert proverToVerifier is sufficient for sameColors
     assert proverToVerifier is sufficient for clearedHats
@@ -350,17 +350,32 @@ test suite for move {
     }
 } 
 
+// the prover/verifier take turns every state
+pred alwaysMove {
+    always {move}
+}
+
 test suite for validTraces {
+    // asserts
+    assert validTraces is sufficient for init
+    assert validTraces is sufficient for validGraph
+    assert validTraces is sufficient for validThreeColor
+    assert validTraces is sufficient for alwaysMove
+    
     // individual predicates already tested, expectations for lack of soundness,
     // completeness and more already in main file
+
     test expect {
         // vacuity
         validTracesIsSat : {validTraces} is sat
     }
 }
 
+
+
+
 test suite for verifierToProverInvalid {
-    test expect {
+        test expect {
         // vacuity 
         verifierToProverInvalidIsSat : {verifierToProverInvalid} is sat
     }
