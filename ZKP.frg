@@ -204,11 +204,11 @@ pred moveInvalid {
     ProofState.turn = Verifier implies verifierToProverInvalid
 }
 
-// start with prover, invalid three coloring and alternate between players
+// start with prover, always invalid three coloring and alternate between players
 pred invalidTraces {
     init
     validGraph
-    not validThreeColor
+    always {not validThreeColor}
     always moveInvalid
 }
 
