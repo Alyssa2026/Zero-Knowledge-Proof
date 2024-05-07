@@ -268,3 +268,47 @@ test expect {
         validTraces implies always passesChallenge
     } is theorem
 }
+
+
+-----------------------------------------------------------
+------------ FURTHER STEPS: ZEROKNOWLEDGENESS -------------
+-----------------------------------------------------------
+
+/*
+// This idea of this predicate is that from state to state, as the procedure
+// progresses, the number of candidate colorings does not shrink (where 'candidate
+// colorings' is a valid three coloring that, as far as the verifier knows, could 
+// potentially be the actual three coloring that the prover has)
+
+pred noKnowledgeGained {
+    // NOTE: we would need some sig representing a 'Coloring' itself, meaning the
+    // assignment of colors to nodes on this graph
+    #{col: Coloring | {
+        validThreeColor[col]
+        // NOTE: we would need some pred possibleColoring that would determine 
+        // whether a coloring was still a candidate coloring in the eyes of the
+        // verifier, given the set of edges that have been revealed to it so
+        // far (thus revealedEdges would have type)
+        possibleColoring[col, revealedEdges]
+    }}
+    = 
+    #{col: Coloring | {
+        validThreeColor[col]
+        next_state {
+            possibleColoring[col, revealedEdges]
+        }
+    }}
+}
+
+// Then, we would need to have a test like the one below to demonstrate that
+// as the procedure progresses, from every state to the next, the verifier
+// cannot narrow down the set of candidate colorings, demonstrating that 
+// they have not gained any knowledge from the procedure. 
+
+test expect {
+    zeroknowledgeness: {
+        validTraces
+        always noKnowledgeGained
+    } is theorem
+}
+*/
