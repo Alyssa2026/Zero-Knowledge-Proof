@@ -135,7 +135,7 @@ pred proverToVerifier {
     ProofState.nodeA = none
     ProofState.nodeB = none
 
-    // frame condition: all nodes have to stay the same color, nodes are notw revealed
+    // frame condition: all nodes have to stay the same color, nodes are now revealed
     all node: Node | {
         node.color = node.color'
         node.hat = none
