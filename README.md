@@ -71,7 +71,7 @@ However, if the verifier discovers nodes of different colors, and the procedure 
 **Valid Three Coloring:**
 
 ![alt text](images/valid-3-Coloring.png)
-As the research paper explains, this procedure must repeat edges2 times. Then, “no matter how the prover plays,” after edges2 trials of not finding any bad edges, the verifier can have roughly 1 - e-edges confidence that the prover has a valid three coloring. In other words, there is only a e-edges probability that the prover did not have a valid three coloring (and was not playing by the rules) and fooled the verifier. In our case, e^-m = e^-5 ≈ 0.006738.
+As the research paper explains, this procedure must repeat edges2 times. Then, “no matter how the prover plays,” after edges2 trials of not finding any bad edges, the verifier can have roughly 1 - e^(-edges) confidence that the prover has a valid three coloring. In other words, there is only a e^(-edges) probability that the prover did not have a valid three coloring (and was not playing by the rules) and fooled the verifier. In our case, e^-m = e^-5 ≈ 0.006738.
 
 Also note that because we have two temporal states for each trial of the proof (one prover turn and one verifier turn), we constrained our tracelength to exactly 50 (m = 5, so m2 = 25, so we need 50 traces for 25 trials).
 
