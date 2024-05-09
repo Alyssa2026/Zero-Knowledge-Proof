@@ -21,12 +21,13 @@ What exactly is achieved in such a system? Zero-knowledge proof systems are a ki
 What exactly does that mean? What does it look like in practice? To broach some of these questions, we decided to focus our CS1710 final project on modeling an actual implementation of one of these zero-knowledge proof systems, a method of proving that a certain party has a 3-coloring of a graph with no adjacent nodes of the same color. The choice of modeling a zero-knowledge proof system for specifically graph 3-coloring was duly motivated — graph 3-coloring is an NP-complete problem to which all other NP problems can be reduced, so by showing a system exists for graph 3-coloring, we by extension show it exists for all other NP problems.
 
 The procedure we modeled has the following shape. The prover either has or does not have a valid 3-coloring of a particular graph. If they do have such a coloring:
-At the start of a round, the prover randomly permutes the three colors. That is they establish a random bijective mapping from the set of the three colors to the set of the three colors.
-The prover colors in the graph using the random mapping and their original solution.
-The prover covers all of the nodes, leaving only the structure of the graph visible (we refer to this as covering the nodes with “hats”). 
-The prover sends this covered graph to the verifier, who selects an edge to challenge.
-The prover uncovers the two nodes at either end of the edge. They should always be different if the prover has a solution and follows the protocol.
-After m^2 rounds (steps 1-5) for an m-edge graph, the verifier is convinced.
+1. At the start of a round, the prover randomly permutes the three colors. That is they establish a random bijective mapping from the set of the three colors to the set of the three colors.
+2. The prover colors in the graph using the random mapping and their original solution.
+3. The prover covers all of the nodes, leaving only the structure of the graph visible (we refer to this as covering the nodes with “hats”). 
+4. The prover sends this covered graph to the verifier, who selects an edge to challenge.
+5. The prover uncovers the two nodes at either end of the edge. They should always be different if the prover has a solution and follows the protocol.
+6. After m^2 rounds (steps 1-5) for an m-edge graph, the verifier is convinced.
+
 If the prover does not  have a valid solution, then we consider them a “cheating” prover. In this case, the coloring they send over each round is arbitrary, and the verifier has at least a 1/m chance of challenging an invalid edge (as their solution is not a correct 3-coloring, and thus has at least one edge with same-color ends). Thus, there is at most (1 - 1/m)^(m^2) chance a “cheating” prover successfully convinces a verifier. 
 
 Note that in the digital implementation of this procedure, an encryption scheme guarantees that the colors are not changed after the prover sends over the graph. This means that the prover cannot recolor any nodes after learning which edge the verifier intends to challenge — i.e. they can’t tailor their invalid solution to specifically pass the challenges.
